@@ -1,0 +1,15 @@
+apiVersion: data.fluid.io/v1alpha1
+kind: AlluxioRuntime
+metadata:
+  name: imagenet-oss
+spec:
+  replicas: 2 # 两个节点配置两个worker
+  data:
+      replicas: 1 # 数据只存一个副本
+  tieredstore:
+    levels:
+      - mediumtype: SSD
+        path: /var/lib/docker/alluxio
+        quota: 150Gi
+        high: "0.95"
+        low: "0.9"
