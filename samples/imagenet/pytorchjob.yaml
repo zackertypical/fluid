@@ -1,0 +1,64 @@
+apiVersion: "kubeflow.org/v1"
+kind: PyTorchJob
+metadata:
+  name: example-imagenet
+spec:
+  pytorchReplicaSpecs:
+    Master:
+      replicas: 1
+      restartPolicy: Never
+      template:
+        spec:
+          containers:
+            - name: pytorch
+              image: nvcr.io/nvidia/pytorch:24.05:py-3
+              imagePullPolicy: IfNotPresent
+              resources:
+                limits:
+                  nvidia.com/gpu: 4
+              env:
+              - name: LOGLEVEL
+                value: DEBUG
+              args:
+              - | 
+                python /imagenet.py --dist-url=env:// --dist-backend=nccl --arch=resnet50 --epochs=10 --batch-size=128 --workers=16 /data/imagenet
+              command:
+              - /usr/bin/env
+              - bash
+              - -c
+              volumeMounts:
+              - name: persistent-storage
+                mountPath: /data/
+          volumes:
+          - name: persistent-storage
+            persistentVolumeClaim:
+              claimName: imagenet-oss
+    Worker:
+      replicas: 1
+      restartPolicy: Never
+      template:
+        spec:
+          containers:
+            - name: pytorch
+              image: nvcr.io/nvidia/pytorch:24.05:py-3
+              imagePullPolicy: IfNotPresent
+              resources:
+                limits:
+                  nvidia.com/gpu: 4
+              env:
+              - name: LOGLEVEL
+                value: DEBUG
+              args:
+              - | 
+                python /imagenet.py --dist-url=env:// --dist-backend=nccl --arch=resnet50 --epochs=10 --batch-size=128 --workers=16 /data/imagenet
+              command:
+              - /usr/bin/env
+              - bash
+              - -c
+              volumeMounts:
+              - name: persistent-storage
+                mountPath: /data/
+          volumes:
+          - name: persistent-storage
+            persistentVolumeClaim:
+              claimName: imagenet-oss
