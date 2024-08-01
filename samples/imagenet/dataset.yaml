@@ -1,0 +1,23 @@
+apiVersion: data.fluid.io/v1alpha1
+kind: Dataset
+metadata:
+  name: imagenet-oss # 对应pvc名字
+spec:
+  mounts:
+    - mountPoint: s3://dataset/imagenet
+      name: imagenet # 会映射到挂载的子目录
+      options:
+        alluxio.underfs.s3.endpoint: http://{{$demo-minio-addr}}:9000 # 配置minio
+        alluxio.underfs.s3.disable.dns.buckets: "true"
+        alluxio.underfs.s3.inherit.acl: "false"
+      encryptOptions:
+      - name: aws.accessKeyId
+        valueFrom:
+          secretKeyRef:
+            name: mysecret
+            key: aws.accessKeyId
+      - name: aws.secretKey
+        valueFrom:
+          secretKeyRef:
+            name: mysecret
+            key: aws.secretKey
