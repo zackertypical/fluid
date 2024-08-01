@@ -10,6 +10,6 @@ spec:
     levels:
       - mediumtype: SSD
         path: /var/lib/docker/alluxio
-        quota: 150Gi
+        quota: 200Gi
         high: "0.95"
         low: "0.9"
