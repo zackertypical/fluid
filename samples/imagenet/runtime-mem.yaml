@@ -10,6 +10,6 @@ spec:
     levels:
       - mediumtype: MEM
         path: /dev/shm
-        quota: 150Gi
+        quota: 200Gi
         high: "0.95"
         low: "0.9"
